@@ -1,0 +1,13 @@
+[package]
+name = "vecmerge"
+version = "0.0.1"
+authors = ["Klas Segeljakt <klasseg@kth.se>"]
+license = "MIT"
+edition = "2018"
+description = "A macro for merging vectors"
+readme = "./README.md"
+repository = "https://github.com/segeljakt/vecmerge"
+
+[dependencies]
+proc-macro-hack = "0.5.7"
+vecmerge-impl = { version = "0.0.1", path = "vecmerge-impl" }
