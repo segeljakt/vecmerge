@@ -57,31 +57,40 @@ impl Visitor {
     fn visit_array_expr(&mut self, array_expr: &syn::ExprArray) {
         let len = array_expr.elems.len();
         self.capacity.push(quote!(#len));
-        for elem in array_expr.elems.iter() {
-            self.parts.push(quote! {
-                vec.push(#elem);
-            });
+        if len == 1 {
+            let elem = &array_expr.elems[0];
+            self.parts.push(quote!(vec.push(#elem);));
+        } else {
+            self.parts
+                .push(quote!(vec.extend(<[_]>::into_vec(std::boxed::Box::new(#array_expr)));));
         }
     }
 
     fn visit_try_array_expr(&mut self, try_array_expr: &syn::ExprArray) {
+        let len = try_array_expr.elems.len();
         let elems = &try_array_expr.elems;
-        let names = (0..elems.len())
-            .into_iter()
-            .map(|index| Ident::new(&format!("elem_{}", index), Span::call_site()))
-            .collect::<Vec<Ident>>();
-        let pattern = quote!((#(Some(#names)),*));
-        let expr = quote!((#elems));
-        let pushes = quote!(#(vec.push(#names);)*);
-        self.parts.push(quote! {
-            if let #pattern = #expr {
-                #pushes
-            }
-        });
+        if len == 1 {
+            let elem = &elems[0];
+            self.parts.push(quote! {
+                if let Some(elem) = #elem {
+                    vec.push(elem);
+                }
+            });
+        } else {
+            let names = (0..elems.len())
+                .into_iter()
+                .map(|index| Ident::new(&format!("elem_{}", index), Span::call_site()))
+                .collect::<Vec<Ident>>();
+            self.parts.push(quote! {
+                if let (#(Some(#names)),*) = (#elems) {
+                    vec.extend(<[_]>::into_vec(std::boxed::Box::new([#(#names,)*])));
+                }
+            });
+        }
     }
 
     fn visit_expr(&mut self, expr: &syn::Expr) {
         self.capacity.push(quote!(#expr.len()));
-        self.parts.push(quote! { vec.extend(#expr); });
+        self.parts.push(quote!(vec.extend(#expr);));
     }
 }

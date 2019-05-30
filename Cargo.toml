@@ -1,6 +1,6 @@
 [package]
 name = "vecmerge"
-version = "0.0.2"
+version = "0.0.3"
 authors = ["Klas Segeljakt <klasseg@kth.se>"]
 license = "MIT"
 edition = "2018"
@@ -10,4 +10,4 @@ repository = "https://github.com/segeljakt/vecmerge"
 
 [dependencies]
 proc-macro-hack = "0.5.7"
-vecmerge-impl = { version = "0.0.2", path = "vecmerge-impl" }
+vecmerge-impl = { version = "0.0.3", path = "vecmerge-impl" }

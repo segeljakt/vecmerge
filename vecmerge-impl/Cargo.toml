@@ -1,6 +1,6 @@
 [package]
 name = "vecmerge-impl"
-version = "0.0.2"
+version = "0.0.3"
 authors = ["Klas Segeljakt <klasseg@kth.se>"]
 license = "MIT"
 edition = "2018"
